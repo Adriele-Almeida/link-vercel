@@ -15,12 +15,60 @@
 .m-ico{width:42px;height:42px;border-radius:13px;display:grid;place-items:center;background:#0e0e0e;box-shadow:var(--sombra-baixa)}.m-ico svg{width:22px;height:22px;fill:none;stroke:var(--lima);stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 0 3px rgba(194,227,0,.45))}.m-nome{font-family:Sora,Inter,system-ui,sans-serif;font-weight:600;font-size:1rem;line-height:1.25}.m-qtd{font-size:.75rem;color:var(--txt3);overflow-wrap:anywhere}.m-led{position:absolute;top:16px;right:16px;width:7px;height:7px;border-radius:50%;background:var(--lima);box-shadow:var(--led)}
 .m-abrir{margin-top:auto;display:inline-flex;align-items:center;gap:5px;font-size:.75rem;font-weight:600;letter-spacing:.1em;color:var(--lima)}.m-abrir svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 @media(min-width:640px){.mundos{grid-template-columns:repeat(3,minmax(0,1fr))}.titulo{font-size:2.125rem}}@media(prefers-reduced-motion:reduce){.mundo{transition:none}}
+
+/* Tipografia ampliada e controles de atalhos */
+.titulo{font-size:clamp(2rem,6vw,2.65rem);letter-spacing:.11em}
+.subtitulo{font-size:.81rem;letter-spacing:.14em}
+.mundo{min-height:198px;padding:21px 17px}
+.m-nome{font-size:clamp(1.15rem,3.7vw,1.43rem);line-height:1.3;overflow-wrap:anywhere}
+.m-qtd{font-size:.88rem;line-height:1.35}
+.m-abrir{font-size:.88rem}
+.m-ico{width:46px;height:46px}
+.m-ico svg{width:25px;height:25px}
+.m-link{color:inherit;text-decoration:none;display:flex;flex:1;flex-direction:column;align-items:flex-start;gap:12px;width:100%;min-width:0}
+.m-link:focus-visible,.barra button:focus-visible,.controles button:focus-visible{outline:2px solid var(--lima);outline-offset:3px}
+.barra{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:-4px}
+.contador{font-size:.92rem;color:var(--txt2)}
+.acoes{display:flex;align-items:center;gap:11px}
+.botao{color:var(--branco);background:linear-gradient(155deg,#252525,#111);border:0;border-radius:14px;box-shadow:var(--sombra);padding:13px 18px;font:600 1rem Inter,system-ui;cursor:pointer}
+.botao:active{box-shadow:var(--sombra-baixa)}
+.botao-mais{font-size:2rem;line-height:1;width:52px;height:52px;padding:0;color:var(--lima);font-weight:400}
+.botao.ativo{color:var(--lima);box-shadow:var(--sombra-baixa)}
+.controles{display:flex;gap:10px;align-items:center;width:100%;padding-top:10px;margin-top:auto}
+.controles button{width:44px;height:42px;display:grid;place-items:center;border:0;border-radius:12px;background:#090909;box-shadow:var(--sombra-baixa);color:var(--lima);font-size:1.3rem;cursor:pointer;touch-action:none}
+.controles button.arrastar{flex:1;font-size:1rem;letter-spacing:.02em}
+.mundo.organizando .m-abrir{display:none}
+.mundo.organizando .m-link{flex:0}
+.mundo.sobre{box-shadow:inset 0 0 0 2px var(--lima),var(--sombra)}
+.aviso{color:var(--lima);font-size:.88rem;margin:-13px 0 0;min-height:1.3em}
+.janela{width:min(93vw,410px);max-height:calc(100dvh - 50px);overflow:auto;border:0;background:#171717;color:white;border-radius:22px;padding:26px 22px;box-shadow:0 24px 90px rgba(0,0,0,.88)}
+.janela::backdrop{background:rgba(0,0,0,.8)}
+.janela h2{margin:0 0 16px;font-family:Sora,Inter,system-ui;font-size:1.3rem}
+.janela form{display:flex;flex-direction:column;gap:14px}
+.janela label{font-weight:600;font-size:.92rem}
+.janela input{width:100%;padding:15px;margin-top:6px;color:white;background:#090909;border:1px solid #444;border-radius:12px;font-size:1rem}
+.janela input:focus{outline:2px solid var(--lima);outline-offset:1px}
+.janela .linha{display:flex;gap:12px;justify-content:flex-end;padding-top:6px}
+.janela .salvar{background:var(--lima);color:#050505}
+.erro{color:#ffb0ae;font-size:.9rem;min-height:1.25em}
+[hidden]{display:none!important}
+@media(max-width:390px){.mundo{padding:18px 13px}.m-nome{font-size:1.12rem}.m-qtd{font-size:.8rem}.mundos{gap:12px}.controles button{width:39px}}
+
 </style>
 </head>
 <body>
 <div class="grain" aria-hidden="true"></div>
 <main class="app">
   <header class="topo"><h1 class="titulo">MEUS APPS</h1><p class="subtitulo">ADRIELE ALMEIDA • A FILHA DOS ROBÔS</p></header>
+
+  <section class="barra" aria-label="Organizar e adicionar atalhos">
+    <span class="contador" id="contador">35 atalhos</span>
+    <div class="acoes">
+      <button class="botao" type="button" id="organizar" aria-pressed="false">Organizar</button>
+      <button class="botao botao-mais" type="button" id="novo" aria-label="Adicionar novo atalho">+</button>
+    </div>
+  </section>
+  <p class="aviso" id="aviso" role="status" aria-live="polite" hidden></p>
   <nav class="mundos" aria-label="Aplicativos publicados">
       <a class="mundo" href="https://agenda-pessoal-blush.vercel.app" aria-label="Abrir Agenda Pessoal">
         <span class="m-led" aria-hidden="true"></span>
@@ -268,6 +316,207 @@
         <span class="m-abrir">ABRIR APP <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg></span>
       </a>
   </nav>
+
+<dialog class="janela" id="janela">
+  <section id="secLogin" hidden>
+    <h2>Entrar para editar</h2>
+    <form id="formLogin">
+      <label>E-mail <input id="email" type="email" autocomplete="username" required></label>
+      <label>Senha <input id="senha" type="password" autocomplete="current-password" required></label>
+      <span class="erro" id="erroLogin" aria-live="polite"></span>
+      <div class="linha"><button type="button" class="botao cancelar">Cancelar</button><button type="submit" class="botao salvar">Entrar</button></div>
+    </form>
+  </section>
+  <section id="secNovo" hidden>
+    <h2>Novo atalho</h2>
+    <form id="formNovo">
+      <label>Nome <input id="tituloNovo" type="text" maxlength="100" placeholder="Nome do aplicativo" required></label>
+      <label>Link <input id="urlNovo" type="url" placeholder="https://..." required></label>
+      <span class="erro" id="erroNovo" aria-live="polite"></span>
+      <div class="linha"><button type="button" class="botao cancelar">Cancelar</button><button type="submit" class="botao salvar">Adicionar</button></div>
+    </form>
+  </section>
+</dialog>
+
 </main>
+
+<script>
+(function(){
+  'use strict';
+  const API='https://uptzkgvfdycxlqnsgokl.supabase.co';
+  const KEY='sb_publishable_9mJj4mF2-IJ5Y5WlSIkp7A_G9a9-f5e';
+  const NAV=document.querySelector('.mundos');
+  const COUNT=document.querySelector('#contador');
+  const NOTICE=document.querySelector('#aviso');
+  const ORGANIZE=document.querySelector('#organizar');
+  const ADD=document.querySelector('#novo');
+  const DIALOG=document.querySelector('#janela');
+  const ICON='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 16 16 8M9 8h7v7"/></svg>';
+  const ARROW='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg>';
+  const fallback=Array.from(NAV.querySelectorAll('a.mundo')).map((el,i)=>({
+     id:'local-'+i,titulo:el.querySelector('.m-nome').textContent,url:el.href,posicao:i*100
+  }));
+  let records=fallback.slice(),edit=false,busy=false,backend=false,nextAction='';
+  let tokens;
+  try{tokens=JSON.parse(localStorage.getItem('link-vercel-sessao')||'null')}catch{tokens=null}
+  const saveSession=s=>{tokens=s;try{if(s)localStorage.setItem('link-vercel-sessao',JSON.stringify(s));else localStorage.removeItem('link-vercel-sessao')}catch{}};
+  const notice=(msg,error=false)=>{NOTICE.hidden=!msg;NOTICE.textContent=msg||'';NOTICE.style.color=error?'#ffb0ae':'var(--lima)'};
+  async function access(){
+    if(!tokens||!tokens.refresh_token)throw new Error('Faça login para editar.');
+    if(tokens.access_token&&Date.now()<tokens.expires_at-60000)return tokens.access_token;
+    const response=await fetch(API+'/auth/v1/token?grant_type=refresh_token',{
+      method:'POST',headers:{'apikey':KEY,'Content-Type':'application/json'},
+      body:JSON.stringify({refresh_token:tokens.refresh_token})
+    });
+    if(!response.ok){saveSession(null);throw new Error('Sessão encerrada. Entre novamente.')}
+    const data=await response.json();
+    saveSession({...data,expires_at:Date.now()+data.expires_in*1000});
+    return tokens.access_token;
+  }
+  async function request(route,method='GET',payload=null,authorized=false){
+    const headers={'apikey':KEY,'Accept':'application/json','Content-Type':'application/json'};
+    if(authorized)headers.Authorization='Bearer '+await access();
+    if(method!=='GET')headers.Prefer='return=minimal';
+    const response=await fetch(API+'/rest/v1/'+route,{
+      method,headers,body:payload?JSON.stringify(payload):undefined,cache:'no-store'
+    });
+    if(!response.ok){let msg='Falha ao salvar os atalhos';try{const body=await response.json();msg=body.message||body.error_description||msg}catch{}throw new Error(msg)}
+    return response.status===204?null:response.json();
+  }
+  const link=(tag,cls,text)=>{const e=document.createElement(tag);e.className=cls;if(text!=null)e.textContent=text;return e};
+  function render(){
+    COUNT.textContent=records.length+' '+(records.length===1?'atalho':'atalhos');
+    ORGANIZE.classList.toggle('ativo',edit);
+    ORGANIZE.setAttribute('aria-pressed',String(edit));
+    ORGANIZE.textContent=edit?'Concluir':'Organizar';
+    NAV.replaceChildren();
+    records.forEach((item,idx)=>{
+      const card=link('article','mundo'+(edit?' organizando':''));card.dataset.id=item.id;
+      const led=link('span','m-led');led.setAttribute('aria-hidden','true');card.append(led);
+      const a=link('a','m-link');a.href=item.url;a.setAttribute('aria-label','Abrir '+item.titulo);
+      a.addEventListener('click',e=>{if(edit)e.preventDefault()});
+      const icon=link('span','m-ico');icon.setAttribute('aria-hidden','true');icon.innerHTML=ICON;
+      const title=link('span','m-nome',item.titulo);
+      const host=link('span','m-qtd');try{host.textContent=new URL(item.url).host}catch{host.textContent=item.url}
+      const abrir=link('span','m-abrir','ABRIR APP ');abrir.insertAdjacentHTML('beforeend',ARROW);
+      a.append(icon,title,host,abrir);card.append(a);
+      if(edit){
+        const controls=link('div','controles');
+        const up=link('button','','↑');up.type='button';up.title='Mover para cima';up.setAttribute('aria-label','Mover '+item.titulo+' para cima');up.disabled=idx===0;
+        const down=link('button','','↓');down.type='button';down.title='Mover para baixo';down.setAttribute('aria-label','Mover '+item.titulo+' para baixo');down.disabled=idx===records.length-1;
+        const drag=link('button','arrastar','↕ Arrastar');drag.type='button';drag.setAttribute('aria-label','Arrastar '+item.titulo+' para outra posição');
+        up.addEventListener('click',()=>moveTo(idx,idx-1));down.addEventListener('click',()=>moveTo(idx,idx+1));
+        dragEvents(drag,item.id);
+        controls.append(up,down,drag);card.append(controls);
+      }
+      NAV.append(card);
+    });
+  }
+  async function load(){
+    if(busy)return;
+    try{
+      const rows=await request('link_vercel_atalhos?select=id,titulo,url,posicao&order=posicao.asc,id.asc');
+      if(!Array.isArray(rows))throw new Error('Resposta inesperada');
+      records=rows;backend=true;render();
+      if(NOTICE.textContent.startsWith('Conexão'))notice('');
+    }catch(e){if(!backend){records=fallback.slice();render();notice('Conexão indisponível. Exibindo os atalhos originais.',true)}}
+  }
+  async function moveTo(from,to){
+    if(busy||from===to||from<0||to<0||to>=records.length)return;
+    busy=true;
+    const original=records.slice();
+    const copy=records.slice();const item=copy.splice(from,1)[0];copy.splice(to,0,item);records=copy;render();
+    try{
+      const ids=copy.map(x=>x.id);
+      await request('rpc/link_vercel_reordenar','POST',{nova_ordem:ids},true);
+      await loadAfterSave();
+      notice('Ordem salva no Supabase.');
+    }catch(e){records=original;render();notice(e.message,true)}
+    finally{busy=false}
+  }
+  async function loadAfterSave(){
+    const rows=await request('link_vercel_atalhos?select=id,titulo,url,posicao&order=posicao.asc,id.asc');
+    records=rows;backend=true;render();
+  }
+  function dragEvents(btn,id){
+    let active=false,targetId=null,originX=0,originY=0;
+    btn.addEventListener('pointerdown',e=>{
+      if(busy||e.button!==0)return;
+      active=true;targetId=null;originX=e.clientX;originY=e.clientY;btn.setPointerCapture(e.pointerId);
+      e.preventDefault();
+    });
+    btn.addEventListener('pointermove',e=>{
+      if(!active)return;
+      if(Math.hypot(e.clientX-originX,e.clientY-originY)<7)return;
+      const found=document.elementFromPoint(e.clientX,e.clientY)?.closest('.mundo');
+      NAV.querySelectorAll('.sobre').forEach(el=>el.classList.remove('sobre'));
+      if(found&&found.dataset.id!==id){targetId=found.dataset.id;found.classList.add('sobre')}
+    });
+    btn.addEventListener('pointerup',()=>{
+      if(!active)return;active=false;
+      NAV.querySelectorAll('.sobre').forEach(el=>el.classList.remove('sobre'));
+      if(targetId){const from=records.findIndex(x=>x.id===id),to=records.findIndex(x=>x.id===targetId);moveTo(from,to)}
+      targetId=null;
+    });
+    btn.addEventListener('pointercancel',()=>{active=false;targetId=null;NAV.querySelectorAll('.sobre').forEach(el=>el.classList.remove('sobre'))});
+  }
+  function showSection(id){
+    document.querySelector('#secLogin').hidden=id!=='secLogin';
+    document.querySelector('#secNovo').hidden=id!=='secNovo';
+    if(!DIALOG.open)DIALOG.showModal();
+    setTimeout(()=>{const inp=document.querySelector('#'+id+' input');inp?.focus()},30);
+  }
+  const close=()=>DIALOG.close();
+  document.querySelectorAll('.cancelar').forEach(b=>b.addEventListener('click',close));
+  async function authorise(action){
+    nextAction=action;
+    try{await access();runAction(action)}catch{showSection('secLogin')}
+  }
+  function runAction(action){
+    if(action==='organizar'){edit=!edit;render();notice(edit?'Use as setas ou arraste os cartões para mudar a posição.':'');}
+    if(action==='novo'){document.querySelector('#formNovo').reset();document.querySelector('#erroNovo').textContent='';showSection('secNovo')}
+  }
+  ORGANIZE.addEventListener('click',()=>{
+    if(edit){edit=false;render();notice('');return}
+    authorise('organizar');
+  });
+  ADD.addEventListener('click',()=>authorise('novo'));
+  document.querySelector('#formLogin').addEventListener('submit',async e=>{
+    e.preventDefault();
+    const error=document.querySelector('#erroLogin');error.textContent='';
+    const submit=e.currentTarget.querySelector('[type=submit]');submit.disabled=true;
+    try{
+      const response=await fetch(API+'/auth/v1/token?grant_type=password',{
+        method:'POST',headers:{'apikey':KEY,'Content-Type':'application/json'},
+        body:JSON.stringify({email:document.querySelector('#email').value.trim(),password:document.querySelector('#senha').value})
+      });
+      if(!response.ok)throw new Error('Confira o e-mail e a senha da conta autorizada.');
+      const data=await response.json();
+      saveSession({...data,expires_at:Date.now()+data.expires_in*1000});
+      close();document.querySelector('#senha').value='';
+      runAction(nextAction);nextAction='';
+    }catch(err){error.textContent=err.message}finally{submit.disabled=false}
+  });
+  document.querySelector('#formNovo').addEventListener('submit',async e=>{
+    e.preventDefault();
+    const error=document.querySelector('#erroNovo');error.textContent='';
+    const submit=e.currentTarget.querySelector('[type=submit]');submit.disabled=true;busy=true;
+    try{
+      const titulo=document.querySelector('#tituloNovo').value.trim();
+      let url=new URL(document.querySelector('#urlNovo').value.trim());
+      if(url.protocol!=='https:')throw new Error('Informe um link HTTPS válido.');
+      if(!titulo||titulo.length>100)throw new Error('Informe o nome do atalho.');
+      const posicao=Math.max(0,...records.map(x=>Number(x.posicao)||0))+100;
+      await request('link_vercel_atalhos','POST',{titulo,url:url.href,posicao},true);
+      close();await loadAfterSave();notice('Atalho adicionado e salvo no Supabase.');
+    }catch(err){error.textContent=err.message.includes('duplicate key')?'Esse link já existe.':err.message}finally{busy=false;submit.disabled=false}
+  });
+  document.addEventListener('visibilitychange',()=>{if(!document.hidden)load()});
+  window.addEventListener('focus',load);
+  setInterval(()=>{if(!document.hidden&&!DIALOG.open)load()},12000);
+  render();load();
+})();
+</script>
+
 </body>
 </html>
